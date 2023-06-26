@@ -33,9 +33,3 @@ public class TicketEntity {
     @JoinColumn(name="to_planet_id", nullable=false)
     private PlanetEntity toPlanet;
 }
-
-//        from_planet_id VARCHAR,
-//        to_planet_id VARCHAR,
-//        FOREIGN KEY(client_id) REFERENCES client(id),
-//        FOREIGN KEY(from_planet_id) REFERENCES planet(id),
-//        FOREIGN KEY(to_planet_id) REFERENCES planet(id)
