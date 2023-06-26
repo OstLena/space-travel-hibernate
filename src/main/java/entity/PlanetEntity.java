@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString
+import java.util.Set;
+
+@ToString(exclude = {"fromPlanetSet", "toPlanetSet"})
 @Getter
 @Setter
 @Entity
@@ -18,4 +20,10 @@ public class PlanetEntity {
 
     @Column(name = "name")
     private String name;
+
+    @OneToMany(mappedBy = "fromPlanet", fetch = FetchType.EAGER)
+    private Set<TicketEntity> fromPlanetSet;
+
+    @OneToMany(mappedBy = "toPlanet", fetch = FetchType.EAGER)
+    private Set<TicketEntity> toPlanetSet;
 }

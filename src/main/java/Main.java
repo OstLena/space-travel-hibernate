@@ -3,12 +3,16 @@ import configurations.FlywayConfigurations;
 import configurations.hibernate.DataSource;
 import entity.ClientEntity;
 import entity.PlanetEntity;
+import entity.TicketEntity;
 import repository.ClientRepository;
 import repository.PlanetRepository;
+import repository.TicketRepository;
 import service.ClientCrudService;
 import service.PlanetCrudService;
+import service.TicketCrudService;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -18,13 +22,22 @@ public class Main {
 
 
         Environment load = Environment.load();
-        testClientCrud(load);
-        testPlanetCrud(load);
-    }
-
-    private static void testClientCrud(Environment load) {
         ClientRepository clientRepository = new ClientRepository(new DataSource(load, ClientEntity.class, PlanetEntity.class));
         ClientCrudService clientCrudService = new ClientCrudService(clientRepository);
+
+        PlanetRepository planetRepository = new PlanetRepository(new DataSource(load, PlanetEntity.class, ClientEntity.class));
+        PlanetCrudService planetCrudService = new PlanetCrudService(planetRepository);
+
+        TicketRepository ticketRepository = new TicketRepository(new DataSource(load, TicketEntity.class, PlanetEntity.class, ClientEntity.class));
+        TicketCrudService ticketCrudService = new TicketCrudService(ticketRepository);
+
+
+        testClientCrud(clientCrudService);
+        testPlanetCrud(planetCrudService);
+        testTicketCrud(ticketCrudService, clientCrudService, planetCrudService);
+    }
+
+    private static void testClientCrud(ClientCrudService clientCrudService) {
 
         clientCrudService.findAll().forEach(System.out::println);
 
@@ -51,9 +64,7 @@ public class Main {
         clientCrudService.findAll().forEach(System.out::println);
     }
 
-    private static void testPlanetCrud(Environment load) {
-        PlanetRepository planetRepository = new PlanetRepository(new DataSource(load, PlanetEntity.class, ClientEntity.class));
-        PlanetCrudService planetCrudService = new PlanetCrudService(planetRepository);
+    private static void testPlanetCrud(PlanetCrudService planetCrudService) {
 
         planetCrudService.findAll().forEach(System.out::println);
 
@@ -79,5 +90,41 @@ public class Main {
 //        DELETE
         planetCrudService.deleteById(updatedPlanet.getId());
         planetCrudService.findAll().forEach(System.out::println);
+    }
+
+    private static void testTicketCrud(TicketCrudService ticketCrudService, ClientCrudService clientCrudService, PlanetCrudService planetCrudService) {
+
+        ticketCrudService.findAll().forEach(System.out::println);
+
+//        CREATE
+        TicketEntity newTicket = new TicketEntity();
+        newTicket.setCreated(Timestamp.valueOf("2025-07-07 16:47:52"));
+        ClientEntity client = clientCrudService.findById(9L);
+        PlanetEntity fromPlanet = planetCrudService.findById("MAR");
+        PlanetEntity toPlanet = planetCrudService.findById("JUPT");
+
+        newTicket.setClientEntity(client);
+        newTicket.setFromPlanet(fromPlanet);
+        newTicket.setToPlanet(toPlanet);
+
+        ticketCrudService.save(newTicket);
+        for (TicketEntity ticketEntity : ticketCrudService.findAll()) {
+            System.out.println(ticketEntity);
+        }
+
+//        UPDATE
+        newTicket.setClientEntity(clientCrudService.findById(10L));
+        newTicket.setFromPlanet(planetCrudService.findById("EAR"));
+        newTicket.setToPlanet(planetCrudService.findById("NEPT"));
+
+        ticketCrudService.update(newTicket);
+
+//        FIND BY ID
+        TicketEntity ticketEntity = ticketCrudService.findById(newTicket.getId());
+        System.out.println(ticketEntity);
+
+//        DELETE
+        ticketCrudService.deleteById(newTicket.getId());
+        ticketCrudService.findAll().forEach(System.out::println);
     }
 }

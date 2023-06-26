@@ -3,6 +3,7 @@ package configurations.hibernate;
 import configurations.Environment;
 import entity.ClientEntity;
 import entity.PlanetEntity;
+import entity.TicketEntity;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
 
@@ -28,6 +29,7 @@ public class HibernateConfiguration {
 
         configuration.addAnnotatedClass(ClientEntity.class);
         configuration.addAnnotatedClass(PlanetEntity.class);
+        configuration.addAnnotatedClass(TicketEntity.class);
 
         return configuration;
     }
