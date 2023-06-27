@@ -29,7 +29,7 @@ public class Main {
         PlanetCrudService planetCrudService = new PlanetCrudService(planetRepository);
 
         TicketRepository ticketRepository = new TicketRepository(new DataSource(load, TicketEntity.class, PlanetEntity.class, ClientEntity.class));
-        TicketCrudService ticketCrudService = new TicketCrudService(ticketRepository);
+        TicketCrudService ticketCrudService = new TicketCrudService(ticketRepository, planetRepository, clientRepository );
 
 
         testClientCrud(clientCrudService);

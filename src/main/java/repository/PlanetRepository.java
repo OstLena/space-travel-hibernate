@@ -65,7 +65,7 @@ public class PlanetRepository {
             throw new RuntimeException("Illegal name " + entity.getName());
         }
 
-        if (entity.getId().length() < 1 || !entity.getId().matches("\\p{Lu}")) {
+        if (entity.getId().length() < 1 || !entity.getId().matches("[A-Z]+")) {
             throw new RuntimeException("Illegal id " + entity.getId());
         }
         PlanetEntity saved = session.merge(entity);
